@@ -1,6 +1,4 @@
 ﻿using Project;
-using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace TestProject
 {
@@ -21,7 +19,7 @@ namespace TestProject
             order.AddProduct(milk, 3);
             order.AddProduct(cake, 1);
             double actualResult = order.GetTotalPrice();
-            
+
             //Assert
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -46,7 +44,7 @@ namespace TestProject
 
             //Assert
             Assert.AreEqual(expectedResult[0], actualResult[0]);
-            Assert.AreEqual(expectedResult[1], actualResult[1]);            
+            Assert.AreEqual(expectedResult[1], actualResult[1]);
             Assert.AreEqual(expectedResult[2], actualResult[2]);
             Assert.AreEqual(expectedResult[3], actualResult[3]);
             Assert.AreEqual(actualResult[0], actualResult[1]);
