@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Project
+﻿namespace Project
 {
-    public class Customer: ICustomer
+    public class Customer : ICustomer
     {
         private string name;
         private double balance;
@@ -29,7 +23,7 @@ namespace Project
         }
 
         public bool CreateOrder(Order order)
-        {            
+        {
             throw new NotImplementedException();
         }
 
