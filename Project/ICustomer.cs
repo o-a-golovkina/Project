@@ -7,8 +7,9 @@
 
         public bool CreateOrder(Order order);
         public Order FindOrder(int number);
-        public bool BuyOrder(Order order);
+        public bool BuyOrder(Order order, ref string s);
         public bool DeleteOrder(Order order);
+        public bool PutMoney(int amount);
         public string GetInfo();
     }
 }

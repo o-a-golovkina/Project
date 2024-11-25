@@ -4,7 +4,7 @@
     {
         DAIRY = 1,
         BAKERY,
-        MEET,
+        MEAT,
         SEAFOOD,
         BEVERAGES,
         CLEANING
