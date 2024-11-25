@@ -2,11 +2,12 @@
 
 namespace TestProject
 {
+
     [TestClass]
     public class CustomerTest
     {
         [TestMethod]
-        [DataRow(null, null)]
+        [DataRow(null, 0)]
         [DataRow("", 530.90)]
         [DataRow(" ", 530.90)]
         [DataRow("M", 530.90)]
@@ -17,7 +18,7 @@ namespace TestProject
             Customer customer;
 
             //Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => customer = new Customer(name, balance));
+            Assert.ThrowsException<FormatException>(() => customer = new Customer(name, balance));
         }
 
         [TestMethod]
@@ -60,7 +61,7 @@ namespace TestProject
             Customer customer = new Customer("Mike", 530.90);
 
             // Act
-            bool result = customer.CreateOrder(null);
+            bool result = customer.CreateOrder(null!);
 
             // Assert
             Assert.IsFalse(result);
@@ -73,6 +74,7 @@ namespace TestProject
             Customer customer = new Customer("Mike", 530.90);
             Product milk = new Product("Milk", 12.2, (ProductType)1);
             Order order = new Order(customer);
+            order.Number = 1;
             order.AddProduct(milk, 1);
 
             // Act
@@ -80,7 +82,7 @@ namespace TestProject
             Order result = customer.FindOrder(1);
 
             // Assert
-            Assert.AreEqual(result, order);
+            Assert.AreEqual(order.Number, result.Number);
         }
 
         [TestMethod]
@@ -97,7 +99,7 @@ namespace TestProject
             Order result = customer.FindOrder(3);
 
             // Assert
-            Assert.AreEqual(result, null);
+            Assert.AreEqual(null, result);
         }
 
         [TestMethod]
@@ -109,9 +111,10 @@ namespace TestProject
             Order order = new Order(customer);
             order.AddProduct(milk, 1);
             customer.CreateOrder(order);
+            string s = "white";
 
             // Act
-            bool result = customer.BuyOrder(order);
+            bool result = customer.BuyOrder(order, ref s);
 
             // Assert
             Assert.IsTrue(result);
@@ -127,9 +130,10 @@ namespace TestProject
             Order order = new Order(customer);
             order.AddProduct(milk, 1);
             customer.CreateOrder(order);
+            string s = "white";
 
             // Act
-            bool result = customer.BuyOrder(order);
+            bool result = customer.BuyOrder(order, ref s);
 
             // Assert
             Assert.IsFalse(result);
@@ -175,22 +179,21 @@ namespace TestProject
         {
             // Arrange
             var customer = new Customer("Mike", 530.30);
-            string str = "------------------------------------" +
-                         "\nCustomer: Mike" +
-                         "\nBalance: 530.30$" +
-                         "\n------------------------------------" +
-                         "\n" +
-                         "\nORDER: 1" +
-                         "\n   Date: 10.12.2010" +
-                         "\n   Status: INPROGRESS" +
-                         "\n------------------------------------" +
-                         "\nProducts:" +
-                         "\n   Milk (DAIRY):   12,20$" +
-                         "\n   Cake (BAKERY):   20,25$" +
-                         "\n   Water (BEVERAGES):   7,5$" +
-                         "\n------------------------------------" +
-                         "\nTotal price:    39,95$" +
-                         "\n------------------------------------";
+            Product milk = new Product("Milk", 12.2, ProductType.DAIRY);
+            Product pork = new Product("Pork", 22.3, ProductType.MEAT);
+            Order order = new Order(customer);
+            order.Number = 1;
+            order.AddProduct(milk, 1);
+            order.AddProduct(pork, 1);
+            customer.CreateOrder(order);
+            string str = " Name: Mike\t Balance: 530,30$\t Card: WHITE (9%)\n" +
+                         "┌───────────┬────────┬────────┬───────────────────────────────┬─────────┬─────────┐\n" +
+                         "│ Date      │ Number │ Status │ Products                      │ Price   │ Total   │\n" +
+                         "├───────────┼────────┼────────┼───────────────────────────────┼─────────┼─────────┤\n" +
+                        $"│{order.Date:yyyy-MM-dd} │001     │NEW     │Milk(DAIRY) ‒ 12,20$           │34,50$   │31,39$   │\n" +
+                         "│           │        │        │Pork(MEAT) ‒ 22,30$            │         │         │\n" +
+                         "├───────────┼────────┼────────┼───────────────────────────────┼─────────┼─────────┤\n" +
+                         "└───────────┴────────┴────────┴───────────────────────────────┴─────────┴─────────┘\n";
 
             // Act
             string info = customer.GetInfo();

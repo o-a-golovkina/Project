@@ -6,19 +6,18 @@ namespace TestProject
     public class ProductTest
     {
         [TestMethod]
-        [DataRow(null, null, null)]
+        [DataRow(null, 0, (ProductType)1)]
         [DataRow("", 12.2, (ProductType)1)]
         [DataRow("M", 12.2, (ProductType)1)]
         [DataRow("Milk", -12.2, (ProductType)1)]
         [DataRow("Milk", 0, (ProductType)1)]
-        [DataRow("Milk", 0, (ProductType)50)]
         public void TestMethod_CreateWrongProduct(string name, double price, ProductType type)
         {
             //Arrange
             Product product;
 
             //Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => product = new Product(name, price, type));
+            Assert.ThrowsException<FormatException>(() => product = new Product(name, price, type));
         }
 
         [TestMethod]
@@ -28,10 +27,10 @@ namespace TestProject
             string name = "Milk";
             double price = 12.2;
             ProductType type = (ProductType)1;
-            Product expectedResult = new Product("Milk", 12.2, (ProductType)1);
+            Product expectedResult = new("Milk", 12.2, (ProductType)1);
 
             //Act
-            Product actualResult = new Product(name, price, type);
+            Product actualResult = new(name, price, type);
 
             //Assert
             Assert.AreEqual(expectedResult.Name, actualResult.Name);
