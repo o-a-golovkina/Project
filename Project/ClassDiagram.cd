@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Project.Product">
+    <Position X="0.5" Y="5.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAQAAAAAAAAQAAAQAAAAFAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Product.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Type" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Project.Order">
+    <Position X="1" Y="0.5" Width="3.25" />
+    <AssociationLine Name="Card" Type="Project.DiscountCard" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.25" Y="3.718" />
+        <Point X="7.106" Y="3.718" />
+        <Point X="7.106" Y="5.844" />
+        <Point X="10" Y="5.844" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAFAABAEAAAAQBQAAEAIQAAAAAAAAAABAAQAAQBAAAQ=</HashCode>
+      <FileName>Order.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Status" />
+      <Property Name="Card" />
+      <Property Name="Customer" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Products" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Project.Customer">
+    <Position X="7.5" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAFAAEAAAAAYAAAAAAwACAQIAAAEAEAAAkAAAAAAEAA=</HashCode>
+      <FileName>Customer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Card" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Orders" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Project.DiscountCard">
+    <Position X="10" Y="5.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAgAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>DiscountCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Project.GoldCard">
+    <Position X="13.5" Y="7.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAgAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>GoldCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Project.WhiteCard">
+    <Position X="6.5" Y="7.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAgAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>WhiteCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Project.BlackCard">
+    <Position X="10" Y="7.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAgAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>BlackCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Project.ICustomer">
+    <Position X="11.25" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAYAAAAAAgACAQAAAAAAEAAAkAAAAAAAAA=</HashCode>
+      <FileName>ICustomer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Project.ProductType">
+    <Position X="5.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAQAAAAAAEAAAAAAAgAAAAACBAAAAAAAAAAA=</HashCode>
+      <FileName>ProductType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Project.Status">
+    <Position X="5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Status.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
