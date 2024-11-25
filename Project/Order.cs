@@ -11,7 +11,7 @@ namespace Project
 
         private static readonly Random random = new();
 
-        public DiscoundCard Card { get; set; }
+        public DiscountCard Card { get; set; }
 
         public Status Status { get; set; }
 

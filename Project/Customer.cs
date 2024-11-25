@@ -12,7 +12,7 @@ namespace Project
 
         public List<Order> Orders { get; private set; } = [];
 
-        public DiscoundCard Card { get; private set; }
+        public DiscountCard Card { get; private set; }
 
         public string Name
         {
