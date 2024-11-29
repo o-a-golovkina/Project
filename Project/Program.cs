@@ -2,14 +2,35 @@
 {
     internal class Program
     {
+        //.NET Delegates
+        private static Predicate<string>? delStringIsNull;
+        private static Action<string>? delStringIsOK;
+
+        //Events
+        private delegate string InputString();
+        private static event InputString? EventInputString;
+
+        private delegate int InputInt();
+        private static event InputInt? EventInputInt;
+
+        //Custom Delegate
+        private delegate void DisplayError(string message);
+        private static DisplayError? delStringError;
+
         static void Main()
         {
             int m;
             List<Customer> customers = [];
+            delStringIsNull = IsNull;
+            delStringIsOK = OutputOK;
+            delStringError = OutputError;
+
+            EventInputString += TextInputString;
+            EventInputInt += TextInputInt;
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("At any point in the program, type \"back\" (for text) or \"0\" (for numbers) to exit the menu.\n");
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
 
             do
             {
@@ -22,7 +43,7 @@
                     case 0:
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine("Exiting...");
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.ResetColor();
                         Environment.Exit(0);
                         break;
 
@@ -44,7 +65,7 @@
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             string s = Console.ReadLine()!;
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
             return s;
         }
 
@@ -52,7 +73,7 @@
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             double d = double.Parse(Console.ReadLine()!);
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
             return d;
         }
 
@@ -60,7 +81,7 @@
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             int i = int.Parse(Console.ReadLine()!);
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
             return i;
         }
 
@@ -68,14 +89,14 @@
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(message + "\n");
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
         }
 
         private static void OutputOK(string message)
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine(message + "\n");
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ResetColor();
         }
 
         private static string InputMainMenu()
@@ -158,7 +179,7 @@
             return Convert.ToInt32(x.KeyChar.ToString());
         }
 
-        private static Customer SignIn(List<Customer> customers)
+        private static Customer SignIn(List<Customer> customers) //PREDICATE!!!
         {
             bool repeat;
             Console.WriteLine("Sign in account\n────────────────");
@@ -166,11 +187,11 @@
             do
             {
                 Console.Write("Name: ");
-                name = TextInputString();
+                name = EventInputString!.Invoke();
                 repeat = false;
-                if (name == null || !Customer.regex.IsMatch(name))
+                if (delStringIsNull!.Invoke(name) || !Customer.regex.IsMatch(name)) //!!!
                 {
-                    OutputError("Inncorrect NAME format!");
+                    delStringError!.Invoke("Inncorrect NAME format!");
                     repeat = true;
                 }
                 else if (name.Equals("back", StringComparison.OrdinalIgnoreCase))
@@ -182,9 +203,9 @@
             var customer = customers.Find(c => c != null && c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
             if (customer == null)
-                OutputError("Customer was not found!");
+                delStringError!.Invoke("Customer was not found!");
             else
-                OutputOK($"Welcome back, {customer.Name}!");
+                delStringIsOK!.Invoke($"Welcome back, {customer.Name}!");
 
             return customer!;
         }
@@ -198,7 +219,7 @@
                 try
                 {
                     Console.Write("Name: ");
-                    string name = TextInputString();
+                    string name = EventInputString!.Invoke();
                     if (name.Equals("back", StringComparison.OrdinalIgnoreCase))
                     {
                         Console.WriteLine();
@@ -218,12 +239,12 @@
 
                     customers.Add(new Customer(name!, money));
 
-                    OutputOK("Account was created!");
+                    delStringIsOK?.Invoke("Account was created!");
                     repeat = false;
                 }
                 catch (FormatException ex)
                 {
-                    OutputError(ex.Message);
+                    delStringError!.Invoke(ex.Message);
                     repeat = true;
                 }
             } while (repeat);
@@ -255,13 +276,13 @@
                         if (c != 0)
                         {
                             customer.CreateOrder(order);
-                            OutputOK("\nOrder was created!");
+                            delStringIsOK?.Invoke("\nOrder was created!");
                         }
                         else
                         {
                             order = null!;
                             Order.ChangeNumer();
-                            OutputError("\nOrder was NOT created!");
+                            delStringError!.Invoke("\nOrder was NOT created!");
                         }
                         break;
 
@@ -269,7 +290,7 @@
                     case 2:
                         if (customer.Orders.Count == 0)
                         {
-                            OutputError("You do NOT have orders!");
+                            delStringError!.Invoke("You do NOT have orders!");
                             break;
                         }
                         int n = 0;
@@ -279,13 +300,13 @@
                             Console.Write("Order number to find: ");
                             try
                             {
-                                n = TextInputInt();
+                                n = EventInputInt!.Invoke();
                             }
-                            catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                            catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
                         } while (repeat);
                         Order temp = customer.FindOrder(n);
                         if (temp == null)
-                            OutputError("Order was NOT found!");
+                            delStringError!.Invoke("Order was NOT found!");
                         else
                             OrderOperation(temp, customer);
                         break;
@@ -296,17 +317,17 @@
                             try
                             {
                                 Console.Write("Amount to put on balance: ");
-                                int money = TextInputInt();
+                                int money = EventInputInt!.Invoke();
                                 repeat = false;
 
                                 if (!customer.PutMoney(money))
                                     throw new Exception("Amount cannot be negative");
                                 else
-                                    OutputOK("Balance replenished!");
+                                    delStringIsOK?.Invoke("Balance replenished!");
                             }
                             catch (Exception ex)
                             {
-                                OutputError(ex.Message);
+                                delStringError!.Invoke(ex.Message);
                                 repeat = true;
                             }
                         } while (repeat);
@@ -347,13 +368,13 @@
                 {
                     repeat = false;
                     Console.Write("Type: ");
-                    string s = TextInputString();
+                    string s = EventInputString!.Invoke();
                     s = s!.ToUpper();
                     t = (ProductType)Enum.Parse(typeof(ProductType), s);
 
-                    if (!Enum.IsDefined(t)) OutputError("Incorrect type!");
+                    if (!Enum.IsDefined(t)) delStringError!.Invoke("Incorrect type!");
                 }
-                catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
             }
             while (!Enum.IsDefined(t) || repeat);
 
@@ -366,14 +387,14 @@
                     repeat = false;
 
                     Console.Write("Product name: ");
-                    string name = TextInputString();
+                    string name = EventInputString!.Invoke();
 
                     Console.Write("\nPrice: ");
                     double price = TextInputDouble();
 
                     product = new Product(name, price, t);
                 }
-                catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
             } while (repeat);
 
             do
@@ -382,12 +403,12 @@
                 Console.Write("\nCount: ");
                 try
                 {
-                    count = TextInputInt();
+                    count = EventInputInt!.Invoke();
                 }
-                catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
             } while (repeat);
 
-            OutputOK("\nProduct was added to order!");
+            delStringIsOK?.Invoke("\nProduct was added to order!");
 
             return product;
         }
@@ -401,7 +422,7 @@
                 {
                     repeat = false;
                     Console.Write("Back? (Yes/No): ");
-                    string back = TextInputString();
+                    string back = EventInputString!.Invoke();
                     if (back == null)
                         throw new Exception("Input yes or no.");
                     else if (back.Equals("yes", StringComparison.OrdinalIgnoreCase))
@@ -411,14 +432,14 @@
                     else
                         throw new Exception("Input yes or no.");
                 }
-                catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
             } while (repeat);
             return false;
         }
 
         private static void OrderOperation(Order order, Customer customer)
         {
-            OutputOK($"Order #{order.Number:D3} was found!");
+            delStringIsOK?.Invoke($"Order #{order.Number:D3} was found!");
             int count = 0;
             bool repeat;
             string name = null!;
@@ -436,7 +457,7 @@
                     case 1:
                         if (order.Status == Status.BOUGHT)
                         {
-                            OutputError("Order was bought. Impossible to add a product!");
+                            delStringError!.Invoke("Order was bought. Impossible to add a product!");
                             break;
                         }
                         while (!BackOrNo())
@@ -450,7 +471,7 @@
                     case 2:
                         if (order.Status == Status.BOUGHT)
                         {
-                            OutputError("Order was bought. Impossible to remove a product!");
+                            delStringError!.Invoke("Order was bought. Impossible to remove a product!");
                             break;
                         }
                         do
@@ -460,22 +481,22 @@
                                 repeat = false;
 
                                 Console.Write("Product name: ");
-                                name = TextInputString();
+                                name = EventInputString!.Invoke();
                             }
-                            catch (Exception ex) { OutputError(ex.Message); repeat = true; }
+                            catch (Exception ex) { delStringError!.Invoke(ex.Message); repeat = true; }
                         } while (repeat);
                         Product temp = order.Products.Find(p => p.Name == name)!;
                         if (temp != null)
                         {
                             order.RemoveProduct(temp);
-                            OutputOK("Product was deleted from order.");
+                            delStringIsOK?.Invoke("Product was deleted from order.");
                         }
                         else
-                            OutputError("Product was NOT found!");
+                            delStringError!.Invoke("Product was NOT found!");
                         if (order.Products.Count == 0)
                         {
                             customer.DeleteOrder(order);
-                            OutputError($"Your order #{order.Number:D3} was deleted (does not contain any products)!");
+                            delStringError!.Invoke($"Your order #{order.Number:D3} was deleted (does not contain any products)!");
                             return;
                         }
                         break;
@@ -484,29 +505,31 @@
                         string str = "white";
                         if (customer.BuyOrder(order, ref str))
                         {
-                            OutputOK("Order was bought. Thank you!");
+                            delStringIsOK?.Invoke("Order was bought. Thank you!");
                             if (str != "white")
                             {
                                 Console.ForegroundColor = ConsoleColor.Magenta;
                                 Console.WriteLine($"You unblock {str.ToUpper()} CARD with discount {customer.Card.Percent}%!!!\n");
-                                Console.ForegroundColor = ConsoleColor.Black;
+                                Console.ResetColor();
                             }
                         }
                         else
-                            OutputError("You can not buy this order!");
+                            delStringError!.Invoke("You can not buy this order!");
                         break;
 
                     case 4:
                         if (customer.DeleteOrder(order))
                         {
-                            OutputOK("Order was deleted.");
+                            delStringIsOK?.Invoke("Order was deleted.");
                             return;
                         }
                         else
-                            OutputError("You can not delete this order!");
+                            delStringError!.Invoke("You can not delete this order!");
                         break;
                 }
             } while (true);
         }
+
+        private static bool IsNull(string str) => str == null;
     }
 }
